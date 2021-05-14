@@ -1,8 +1,10 @@
 # nQueens
-This is nQueens solve program.
-You run this program then it asks you "Input PROBLEM SIZE: n = " on your prompt so please input the size of problem you want to solve.
+A very simple _n_ queens puzzle solver written in c.
 
+To use this program, run this in a terminal and answer the prompt `Input problem size: n = ` with the size of the problem you want to solve.
+If you input less than or equals 0 then this program alerts you and suggests `Input problem size AGAIN: n = ` so answer again.
 
-runnig options:
-  -n  : show answer by (row, col) form  (also --number)
-  -b  : show answer by visualized board  (also --board)
+Options:
+- `-n` ( or `--number`) : show the answer in a (row, col) form
+- `-b` ( or `--board` ) : show the answer in a visualised board
+- `-c` ( or `--count` ) : show only number of answer
