@@ -5,6 +5,9 @@
 
 int bor=1;
 int num=1;
+int cnt=1;
+
+int c=0;
 int n;
 int** Q;
 
@@ -20,9 +23,6 @@ void makeAnser();
 
 int main(int argc, char** argv) {
     checkOptions(argc, argv);
-    
-    printf("Input PROBLEM SIZE: n = ");
-    scanf("%d", &n);
 
     init();
     putQ(1);
@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
 
 
 void checkOptions(int argc, char** argv) {
-    int argi=0, opti=0, optc=4, tmp, i;
-    char* opt[] = {"--board", "--number", "-b", "-n"};
+    int argi=0, opti=0, optc=6, tmp, i;
+    char* opt[] = {"--board", "--count", "--number", "-b", "-c", "-n"};
     char** myargv;
 
     if(argc == 1) return;
@@ -48,18 +48,23 @@ void checkOptions(int argc, char** argv) {
 
     sort(myargv, 0, argc-1);
 
-    bor = 0; num = 0;
-    while((argi<argc) && (opti<optc)) {
+    bor = 0; num = 0; cnt = 0;
+    while((argi < argc) && (opti < optc)) {
         tmp = strcmp(myargv[argi], opt[opti]);
         if(!tmp) {
             switch (opti) {
             case 0:
-            case 2:
+            case 3:
                 bor = 1;
                 break;
             
             case 1:
-            case 3:
+            case 4:
+                cnt = 1;
+                break;
+
+            case 2:
+            case 5:
                 num = 1;
                 break;
             }
@@ -68,10 +73,13 @@ void checkOptions(int argc, char** argv) {
         else if(tmp < 0) argi++;
         else opti++;
     }
+
+    for(i=0; i<argc; i++) free(myargv[i]);
+    free(myargv);
 }
 
 
-void sort(char** s, int  left, int right) {
+void sort(char** s, int left, int right) {
     if(left < right) {
         int i=left, j=right;
         char tmp[20];
@@ -80,7 +88,7 @@ void sort(char** s, int  left, int right) {
         while(1) {
             while(strcmp(s[i], pivot) < 0) i++;
             while(strcmp(pivot, s[j]) < 0) j--;
-            if(i>= j) break;
+            if(i >= j) break;
 
             strcpy(tmp, s[i]);
             strcpy(s[i], s[j]);
@@ -97,19 +105,27 @@ void sort(char** s, int  left, int right) {
 char* mid(char* s1, char* s2, char* s3) {
     if(strcmp(s1, s2) < 0) {
         if(strcmp(s2, s3) < 0) return s2;
-        else if(strcmp(s1, s3) < 0) return s3;
-        else return s1;
+        if(strcmp(s1, s3) < 0) return s3;
+        return s1;
     }
-    else {
-        if(strcmp(s2, s3) > 0) return s2;
-        else if(strcmp(s1, s3) > 0) return s3;
-        else return s1;
-    }
+    if(strcmp(s2, s3) > 0) return s2;
+    if(strcmp(s1, s3) > 0) return s3;
+    return s1;
 }
 
 
 void init() {
     int i, j;
+
+    printf("Input problem size: n = ");
+    scanf("%d", &n);
+    while(n <= 0) {
+        printf("\n **Error: init: Input a number MORE THAN 0.\n");
+        printf("Input problem size AGAIN: n = ");
+        scanf("%d", &n);
+    }
+    printf("\n");
+
     Q = (int**) malloc(sizeof(int*) * (n+2));
     for(i=0; i<=n+1; i++) {
         Q[i] = (int*) malloc(sizeof(int) * (n+2));
@@ -134,16 +150,18 @@ void putQ(int i) {
                 if(Q[i2][j2]) break;
             if(j2 != j+2) break;
         }
-        
-        if((i2==i+2) && (j2==j+2)) {
-            for(k=1; k<=n; k++)
+
+        if((i2 == i+2) && (j2 == j+2)) {
+            for(k=1; k<i; k++)
                 if(Q[k][j]) break;
 
-            if(k==n+1) {
+            if(k == i) {
                 Q[i][j] = 1;
-                if(i==n) {
+                if(i == n) {
                     makeAnser();
                     Q[i][j] = 0;
+                    
+                    if(n == 1) break;
                     return;
                 }
 
@@ -152,6 +170,8 @@ void putQ(int i) {
             }
         }
     }
+
+    if(cnt && i == 1) printf("\nNumber of answers is %d\n", c);
 }
 
 
@@ -183,4 +203,6 @@ void makeAnser() {
         for(j=0; j<n; j++) printf("+-");
         printf("+\n\n");
     }
+
+    c++;
 }
